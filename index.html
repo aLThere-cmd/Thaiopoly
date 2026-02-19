@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>ทัวร์ไทย: คณิตผจญภัย</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600;700&display=swap');
+:root { --gold:#d4af37; --bg:#1a1a2e; --thai-red:#c0392b; --thai-blue:#1565c0; }
+*{box-sizing:border-box;user-select:none;-webkit-tap-highlight-color:transparent}
+body{margin:0;background:var(--bg);height:100vh;width:100vw;overflow:hidden;display:flex;align-items:center;justify-content:center;font-family:'Sarabun',sans-serif}
+
+/* START */
+#start-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:radial-gradient(circle at center,#2d1b69 0%,#0a0a1a 100%);z-index:99999;display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity .5s}
+.start-title{font-size:60px;color:var(--gold);text-shadow:0 0 30px rgba(212,175,55,.8);margin:0;text-align:center}
+.start-sub{font-size:22px;color:#eee;opacity:.8;margin:8px 0 30px}
+.start-btn{padding:15px 50px;font-size:22px;border-radius:50px;background:linear-gradient(135deg,#d4af37,#f39c12);color:#fff;border:none;cursor:pointer;font-family:'Sarabun';font-weight:700;box-shadow:0 0 30px rgba(212,175,55,.6);animation:pulse 2s infinite;letter-spacing:1px}
+.thai-decor{font-size:50px;opacity:.3;position:absolute}
+.thai-decor.tl{top:20px;left:20px}.thai-decor.tr{top:20px;right:20px}.thai-decor.bl{bottom:20px;left:20px}.thai-decor.br{bottom:20px;right:20px}
+
+/* SCALER */
+#game-scaler{transform-origin:center center;width:1200px;height:800px;display:flex;gap:16px;padding:16px;background:linear-gradient(135deg,#fdf6e3 0%,#faebd7 100%);border-radius:20px;box-shadow:0 0 50px rgba(0,0,0,.5);position:relative;border:3px solid var(--gold)}
+
+/* SIDEBAR */
+.sidebar{width:300px;display:flex;flex-direction:column;background:linear-gradient(180deg,#ffffff 0%,#fef9f0 100%);border-radius:16px;padding:16px;box-shadow:0 10px 30px rgba(0,0,0,.1);border:2px solid var(--gold)}
+.logo{font-size:26px;font-weight:700;text-align:center;margin-bottom:12px;color:var(--thai-red);text-shadow:1px 1px 0 rgba(0,0,0,.1)}
+.logo-sub{font-size:13px;text-align:center;color:#888;margin-top:-10px;margin-bottom:12px}
+.stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
+.p-stat{background:#fff;padding:8px;border-radius:10px;text-align:center;border:2px solid #eee;transition:.3s;font-size:13px}
+.p-stat.active-turn{transform:scale(1.08);border-color:var(--gold);box-shadow:0 4px 12px rgba(212,175,55,.4)}
+.p-stat.dead{opacity:.35;filter:grayscale(1)}
+.p-name{font-weight:600;font-size:14px}.p-money{font-weight:700;color:#2d3436;font-size:16px}
+
+/* DICE */
+.dice-area{flex-grow:1;display:flex;flex-direction:column;align-items:center;justify-content:center;background:rgba(0,0,0,.03);border-radius:12px;margin:8px 0}
+.dice-container{width:80px;height:80px;perspective:400px;margin:8px auto}
+.dice{width:60px;height:60px;position:relative;transform-style:preserve-3d;transition:transform .7s cubic-bezier(.25,.46,.45,.94)}
+.side{position:absolute;width:60px;height:60px;background:#fff;border:1px solid #ccc;border-radius:8px;display:grid;grid-template:repeat(3,1fr)/repeat(3,1fr);padding:5px}
+.dot{background:#333;border-radius:50%;margin:3px;box-shadow:inset 0 1px 2px rgba(0,0,0,.4)}
+.s1{transform:rotateY(0deg) translateZ(30px)}.s2{transform:rotateY(90deg) translateZ(30px)}
+.s3{transform:rotateY(180deg) translateZ(30px)}.s4{transform:rotateY(-90deg) translateZ(30px)}
+.s5{transform:rotateX(90deg) translateZ(30px)}.s6{transform:rotateX(-90deg) translateZ(30px)}
+#status-msg{text-align:center;color:#636e72;font-size:14px;margin-top:4px;min-height:40px;padding:0 8px}
+
+/* BUTTONS */
+.controls{margin-top:auto}
+button{width:100%;padding:13px;border-radius:10px;border:none;font-size:16px;font-weight:700;cursor:pointer;color:#fff;margin-bottom:6px;font-family:'Sarabun';box-shadow:0 4px 0 rgba(0,0,0,.2);transition:transform .1s}
+button:active:not(:disabled){transform:translateY(3px);box-shadow:none}
+button:disabled{background:#b2bec3!important;cursor:not-allowed;box-shadow:none;opacity:.6}
+.btn-roll{background:linear-gradient(135deg,#8e44ad,#6c5ce7)}.btn-buy{background:linear-gradient(135deg,#27ae60,#00b894)}.btn-pass{background:linear-gradient(135deg,#e74c3c,#ff7675)}
+
+/* BOARD */
+.board-wrapper{flex-grow:1;display:flex;align-items:center;justify-content:center}
+.board{display:grid;grid-template-columns:repeat(11,62px);grid-template-rows:repeat(11,62px);gap:2px;background:#c8a96e;padding:5px;border-radius:8px;box-shadow:0 10px 40px rgba(0,0,0,.2);border:4px solid #8B6914;position:relative}
+.cell{background:#fef9f0;border:1px solid #ddd;border-radius:3px;display:flex;flex-direction:column;align-items:center;position:relative;overflow:hidden}
+.cell-emoji{font-size:22px;margin:auto}
+.cell-info{position:absolute;bottom:0;width:100%;background:rgba(255,255,255,.9);text-align:center;font-size:8px;padding:2px 0;font-weight:700;line-height:1.2}
+.corner{background:linear-gradient(135deg,#fff3cd,#ffe082);display:flex;align-items:center;justify-content:center;font-size:20px;text-align:center;line-height:1.2;font-weight:900;color:var(--thai-red)}
+.center-box{grid-area:2/2/11/11;background:linear-gradient(135deg,#fff8e1,#fff3cd);display:flex;flex-direction:column;align-items:center;justify-content:center;border:2px dashed var(--gold);border-radius:4px}
+.deck-placeholder{width:90px;height:120px;background:linear-gradient(135deg,#c0392b,#8e1010);border:2px solid var(--gold);border-radius:10px;display:flex;align-items:center;justify-content:center;color:var(--gold);font-size:36px;cursor:pointer;box-shadow:4px 4px 0 var(--gold)}
+.player{width:26px;height:26px;border-radius:50%;border:2px solid white;position:absolute;z-index:10;box-shadow:0 3px 6px rgba(0,0,0,.3);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;transition:transform .4s cubic-bezier(.175,.885,.32,1.275)}
+
+/* CARD OVERLAY */
+#active-card-overlay{position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(0,0,0,.85);z-index:20000;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .3s;backdrop-filter:blur(4px)}
+#active-card-overlay.show{opacity:1;pointer-events:auto}
+.card-flipper{width:320px;height:430px;position:relative;transform-style:preserve-3d;transition:transform .6s,opacity .3s;transform:scale(.5) translateY(100px);opacity:0}
+#active-card-overlay.show .card-flipper{transform:scale(1) translateY(0);opacity:1}
+#active-card-overlay.show .card-flipper.flipped{transform:rotateY(180deg)}
+.c-face{position:absolute;width:100%;height:100%;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:16px;display:flex;flex-direction:column;align-items:center;justify-content:center;box-shadow:0 20px 60px rgba(0,0,0,.5);border:4px solid var(--gold)}
+.c-front{background:linear-gradient(135deg,#8e1010,#c0392b);color:var(--gold)}
+.c-back{background:#fff;transform:rotateY(180deg);padding:20px;color:#333;justify-content:flex-start}
+.quiz-level{font-size:11px;padding:3px 10px;border-radius:20px;font-weight:700;margin-bottom:8px;display:inline-block}
+.lvl-easy{background:#e8f5e9;color:#2e7d32}.lvl-hard{background:#fce4ec;color:#b71c1c}
+#q-text{font-size:20px;font-weight:700;text-align:center;margin:10px 0;line-height:1.4;color:#2d3436}
+.quiz-opt{width:100%;padding:10px 14px;margin-top:6px;background:#f5f5f5;border:1px solid #e0e0e0;border-radius:8px;text-align:left;font-size:15px;cursor:pointer;transition:.15s;font-family:'Sarabun';font-weight:600}
+.quiz-opt:hover{background:#fff3cd}.quiz-opt:active{background:var(--gold);color:#fff}
+.quiz-opt.correct{background:#c8e6c9!important;border-color:#4caf50;color:#1b5e20}
+.quiz-opt.wrong{background:#ffcdd2!important;border-color:#f44336;color:#b71c1c}
+
+/* RESULT TOAST */
+#result-toast{position:fixed;top:20px;left:50%;transform:translateX(-50%) translateY(-80px);background:#333;color:#fff;padding:12px 28px;border-radius:30px;font-size:18px;font-weight:700;z-index:30000;transition:transform .4s;box-shadow:0 8px 24px rgba(0,0,0,.3)}
+#result-toast.show{transform:translateX(-50%) translateY(0)}
+
+@keyframes pulse{0%{transform:scale(1)}50%{transform:scale(1.04)}100%{transform:scale(1)}}
+</style>
+</head>
+<body>
+
+<div id="start-overlay">
+  <div class="thai-decor tl">🏯</div><div class="thai-decor tr">🐘</div>
+  <div class="thai-decor bl">🌺</div><div class="thai-decor br">⛪</div>
+  <h1 class="start-title">🇹🇭 ทัวร์ไทย</h1>
+  <p class="start-sub">คณิตผจญภัย — ลำดับเลขคณิต</p>
+  <button class="start-btn" onclick="Game.start()">▶ เริ่มเกม</button>
+</div>
+
+<div id="result-toast" id="result-toast">+300 ฿</div>
+
+<div id="active-card-overlay">
+  <div class="card-flipper" id="card-flipper">
+    <div class="c-face c-front">
+      <div style="font-size:56px">🎴</div>
+      <div style="font-size:22px;margin-top:12px;letter-spacing:2px;font-weight:700">การ์ดโชคดี</div>
+      <div style="font-size:14px;opacity:.7;margin-top:6px">ลำดับเลขคณิต</div>
+    </div>
+    <div class="c-face c-back">
+      <h3 style="color:var(--thai-red);margin:0;font-size:18px;text-align:center">🧮 คำถาม</h3>
+      <span id="q-level" class="quiz-level lvl-easy">ง่าย</span>
+      <p id="q-text">กำลังโหลด...</p>
+      <div id="q-opts" style="width:100%"></div>
+    </div>
+  </div>
+</div>
+
+<div id="game-scaler">
+  <div class="sidebar">
+    <div class="logo">🇹🇭 ทัวร์ไทย</div>
+    <div class="logo-sub">ลำดับเลขคณิต</div>
+    <div class="stats-grid" id="ui-stats"></div>
+    <div class="dice-area">
+      <div class="dice-container">
+        <div class="dice" id="dice-el">
+          <div class="side s1"><div class="dot" style="grid-area:2/2"></div></div>
+          <div class="side s2"><div class="dot" style="grid-area:1/1"></div><div class="dot" style="grid-area:3/3"></div></div>
+          <div class="side s3"><div class="dot" style="grid-area:1/1"></div><div class="dot" style="grid-area:2/2"></div><div class="dot" style="grid-area:3/3"></div></div>
+          <div class="side s4"><div class="dot" style="grid-area:1/1"></div><div class="dot" style="grid-area:1/3"></div><div class="dot" style="grid-area:3/1"></div><div class="dot" style="grid-area:3/3"></div></div>
+          <div class="side s5"><div class="dot" style="grid-area:1/1"></div><div class="dot" style="grid-area:1/3"></div><div class="dot" style="grid-area:2/2"></div><div class="dot" style="grid-area:3/1"></div><div class="dot" style="grid-area:3/3"></div></div>
+          <div class="side s6"><div class="dot" style="grid-area:1/1"></div><div class="dot" style="grid-area:1/3"></div><div class="dot" style="grid-area:2/1"></div><div class="dot" style="grid-area:2/3"></div><div class="dot" style="grid-area:3/1"></div><div class="dot" style="grid-area:3/3"></div></div>
+        </div>
+      </div>
+      <div id="status-msg">พร้อมเล่น</div>
+    </div>
+    <div class="controls">
+      <button id="btn-roll" class="btn-roll" onclick="Game.roll()">🎲 ทอยลูกเต๋า</button>
+      <div style="display:flex;gap:8px">
+        <button id="btn-buy" class="btn-buy" disabled onclick="Game.buy()">🛒 ซื้อ</button>
+        <button id="btn-pass" class="btn-pass" disabled onclick="Game.pass()">⏭ ผ่าน</button>
+      </div>
+    </div>
+  </div>
+  <div class="board-wrapper">
+    <div class="board" id="board-el">
+      <div class="center-box">
+        <div class="deck-placeholder">🎴</div>
+        <div style="margin-top:8px;color:#a0856c;font-size:12px;font-weight:600">การ์ดคำถาม</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* === SCALER === */
+const Scaler={
+  init(){window.addEventListener('resize',()=>this.resize());this.resize()},
+  resize(){
+    const g=document.getElementById('game-scaler');
+    const s=Math.min(window.innerWidth/1200,window.innerHeight/800)*.96;
+    g.style.transform=`scale(${s})`;
+  }
+};
+
+/* === AUDIO === */
+const AudioSys={
+  ctx:null,
+  init(){if(!this.ctx)this.ctx=new(window.AudioContext||window.webkitAudioContext)();if(this.ctx.state==='suspended')this.ctx.resume()},
+  beep(f,d,t='sine'){
+    if(!this.ctx)return;
+    const o=this.ctx.createOscillator(),g=this.ctx.createGain();
+    o.type=t;o.frequency.value=f;
+    g.gain.setValueAtTime(.1,this.ctx.currentTime);
+    g.gain.exponentialRampToValueAtTime(.001,this.ctx.currentTime+d);
+    o.connect(g);g.connect(this.ctx.destination);o.start();o.stop(this.ctx.currentTime+d);
+  },
+  playRoll(){for(let i=0;i<6;i++)setTimeout(()=>this.beep(180+i*50,.1,'triangle'),i*80)},
+  playWin(){[400,520,640,800].forEach((f,i)=>setTimeout(()=>this.beep(f,.25),i*90))},
+  playFail(){this.beep(140,.5,'sawtooth')}
+};
+
+/* === LOCATIONS === */
+const LOCS=[
+  {n:'🏁 เริ่ม',t:'corner'},{n:'กรุงเทพฯ',e:'🏙️',p:150},{n:'❓ การ์ด',t:'card'},{n:'เชียงใหม่',e:'⛰️',p:180},
+  {n:'ภูเก็ต',e:'🏖️',p:200},{n:'อยุธยา',e:'🏯',p:220},{n:'❓ การ์ด',t:'card'},{n:'กาญจนบุรี',e:'🌿',p:240},
+  {n:'สุโขทัย',e:'🏛️',p:260},{n:'นครราชสีมา',e:'🐘',p:280},{n:'🔒 พัก',t:'corner'},
+  {n:'ขอนแก่น',e:'🌾',p:300},{n:'❓ การ์ด',t:'card'},{n:'อุดรธานี',e:'🎪',p:320},
+  {n:'หนองคาย',e:'🌊',p:340},{n:'นครพนม',e:'🎏',p:360},{n:'❓ การ์ด',t:'card'},
+  {n:'สกลนคร',e:'🦅',p:380},{n:'มุกดาหาร',e:'🌉',p:400},{n:'อุบลราชธานี',e:'🌸',p:420},
+  {n:'🅿️ จอด',t:'corner'},{n:'ร้อยเอ็ด',e:'🌻',p:160},{n:'❓ การ์ด',t:'card'},
+  {n:'มหาสารคาม',e:'📚',p:170},{n:'นครสวรรค์',e:'🦢',p:190},{n:'พิษณุโลก',e:'🏔️',p:210},
+  {n:'❓ การ์ด',t:'card'},{n:'เพชรบูรณ์',e:'🌲',p:230},{n:'ตาก',e:'🌄',p:250},
+  {n:'แม่ฮ่องสอน',e:'🏞️',p:270},{n:'👮 ไปคุก',t:'corner'},{n:'ลำปาง',e:'🐘',p:290},
+  {n:'❓ การ์ด',t:'card'},{n:'ลำพูน',e:'🌺',p:310},{n:'เชียงราย',e:'⛩️',p:330},
+  {n:'พะเยา',e:'🐟',p:350},{n:'❓ การ์ด',t:'card'},{n:'น่าน',e:'🍃',p:370},
+  {n:'แพร่',e:'🎋',p:390},{n:'อุตรดิตถ์',e:'🌿',p:410}
+];
+
+/* === 50 ARITHMETIC SEQUENCE WORD PROBLEMS === */
+const QUIZ=[
+// EASY — ลำดับเลขคณิต (25 ข้อ)
+{q:"ลำดับ 7, 12, 17, ... พจน์ที่ 8 เท่ากับเท่าใด?",a:["37","42","47"],c:1,lv:0},
+{q:"ลำดับ 3, 9, 15, ... พจน์ที่ 6 เท่ากับเท่าใด?",a:["30","33","36"],c:1,lv:0},
+{q:"ลำดับ 20, 18, 16, ... พจน์ที่ 7 เท่ากับเท่าใด?",a:["8","10","12"],c:1,lv:0},
+{q:"ลำดับ 5, 8, 11, ... พจน์ที่ 10 เท่ากับเท่าใด?",a:["29","30","32"],c:2,lv:0},
+{q:"ลำดับ 100, 95, 90, ... พจน์ที่ 5 เท่ากับเท่าใด?",a:["75","80","85"],c:1,lv:0},
+{q:"ลำดับ 1, 4, 7, ... พจน์ที่ 15 เท่ากับเท่าใด?",a:["40","42","43"],c:2,lv:0},
+{q:"ลำดับ 2, 6, 10, ... พจน์ที่ 9 เท่ากับเท่าใด?",a:["30","32","34"],c:2,lv:0},
+{q:"ลำดับ 50, 45, 40, ... พจน์ที่ 6 เท่ากับเท่าใด?",a:["20","25","30"],c:1,lv:0},
+{q:"ลำดับ 9, 13, 17, ... พจน์ที่ 7 เท่ากับเท่าใด?",a:["29","33","37"],c:1,lv:0},
+{q:"ลำดับ 4, 7, 10, ... พจน์ที่ 12 เท่ากับเท่าใด?",a:["34","37","40"],c:1,lv:0},
+{q:"ลำดับ 30, 27, 24, ... พจน์ที่ 8 เท่ากับเท่าใด?",a:["6","9","12"],c:1,lv:0},
+{q:"ลำดับ 6, 12, 18, ... พจน์ที่ 7 เท่ากับเท่าใด?",a:["36","42","48"],c:1,lv:0},
+{q:"ลำดับ 15, 20, 25, ... พจน์ที่ 9 เท่ากับเท่าใด?",a:["50","55","60"],c:1,lv:0},
+{q:"ลำดับ 8, 6, 4, ... พจน์ที่ 10 เท่ากับเท่าใด?",a:["-8","-10","-12"],c:1,lv:0},
+{q:"ลำดับ 11, 15, 19, ... พจน์ที่ 5 เท่ากับเท่าใด?",a:["23","27","31"],c:1,lv:0},
+{q:"ลำดับ 0, 5, 10, ... พจน์ที่ 11 เท่ากับเท่าใด?",a:["45","50","55"],c:1,lv:0},
+{q:"ลำดับ 1000, 900, 800, ... พจน์ที่ 4 เท่ากับเท่าใด?",a:["600","700","750"],c:1,lv:0},
+{q:"ลำดับ 13, 18, 23, ... พจน์ที่ 6 เท่ากับเท่าใด?",a:["33","38","43"],c:1,lv:0},
+{q:"ลำดับ 21, 24, 27, ... พจน์ที่ 10 เท่ากับเท่าใด?",a:["45","48","51"],c:1,lv:0},
+{q:"ลำดับ 2, 3, 4, ... พจน์ที่ 20 เท่ากับเท่าใด?",a:["19","20","21"],c:2,lv:0},
+{q:"ลำดับ 70, 65, 60, ... พจน์ที่ 9 เท่ากับเท่าใด?",a:["25","30","35"],c:1,lv:0},
+{q:"ลำดับ 14, 19, 24, ... พจน์ที่ 7 เท่ากับเท่าใด?",a:["39","44","49"],c:1,lv:0},
+{q:"ลำดับ 1, -1, -3, ... พจน์ที่ 6 เท่ากับเท่าใด?",a:["-9","-11","-13"],c:1,lv:0},
+{q:"ลำดับ 25, 30, 35, ... พจน์ที่ 4 เท่ากับเท่าใด?",a:["40","45","50"],c:0,lv:0},
+{q:"ลำดับ 90, 80, 70, ... พจน์ที่ 5 เท่ากับเท่าใด?",a:["40","50","60"],c:1,lv:0},
+
+// HARD — ลำดับเลขคณิต (25 ข้อ)
+{q:"ลำดับ 4, 9, 14, ... พจน์ที่ n เท่ากับ 64 จงหา n",a:["12","13","14"],c:1,lv:1},
+{q:"ลำดับ 3, 7, 11, ... ผลบวก 15 พจน์แรกเท่ากับเท่าใด?",a:["465","480","495"],c:0,lv:1},
+{q:"ลำดับ 10, 15, 20, ... มีกี่พจน์ที่ไม่เกิน 100?",a:["17","18","19"],c:2,lv:1},
+{q:"ลำดับ 100, 92, 84, ... พจน์ที่เท่าใดมีค่าเท่ากับ 4?",a:["12","13","14"],c:1,lv:1},
+{q:"ลำดับ 1, 3, 5, ... ผลบวก 20 พจน์แรกเท่ากับเท่าใด?",a:["400","420","440"],c:0,lv:1},
+{q:"ลำดับ 8, 12, 16, ... ถ้าพจน์สุดท้ายคือ 100 มีทั้งหมดกี่พจน์?",a:["23","24","25"],c:1,lv:1},
+{q:"ลำดับ 50, 45, 40, ... ผลบวก 10 พจน์แรกเท่ากับเท่าใด?",a:["275","300","325"],c:0,lv:1},
+{q:"ลำดับ 6, 11, 16, ... พจน์ที่ 20 เท่ากับเท่าใด?",a:["96","101","106"],c:1,lv:1},
+{q:"ลำดับ 2, 4, 6, ... ผลบวก n พจน์แรกเท่ากับ 110 จงหา n",a:["9","10","11"],c:1,lv:1},
+{q:"ลำดับ 5, 9, 13, ... พจน์ที่ 25 เท่ากับเท่าใด?",a:["97","101","105"],c:1,lv:1},
+{q:"ลำดับ 200, 180, 160, ... มีกี่พจน์ก่อนจะติดลบ?",a:["10","11","12"],c:1,lv:1},
+{q:"ลำดับ 7, 14, 21, ... ผลบวก 12 พจน์แรกเท่ากับเท่าใด?",a:["546","588","630"],c:1,lv:1},
+{q:"ลำดับ 1, 4, 7, ... พจน์ที่เท่าใดมีค่าเท่ากับ 100?",a:["33","34","35"],c:1,lv:1},
+{q:"ลำดับ 90, 85, 80, ... ผลบวก 8 พจน์แรกเท่ากับเท่าใด?",a:["580","600","620"],c:1,lv:1},
+{q:"ลำดับ 12, 15, 18, ... พจน์ที่ 30 เท่ากับเท่าใด?",a:["96","99","102"],c:1,lv:1},
+{q:"ลำดับ 3, 8, 13, ... ถ้าพจน์ที่ 15 เท่ากับเท่าใด?",a:["68","73","78"],c:1,lv:1},
+{q:"ลำดับ 1000, 950, 900, ... พจน์ที่ 10 เท่ากับเท่าใด?",a:["550","600","650"],c:1,lv:1},
+{q:"ลำดับ 4, 10, 16, ... ผลบวก 10 พจน์แรกเท่ากับเท่าใด?",a:["310","320","330"],c:1,lv:1},
+{q:"ลำดับ 15, 25, 35, ... พจน์ที่ n เท่ากับ 205 จงหา n",a:["18","19","20"],c:1,lv:1},
+{q:"ลำดับ 2, 5, 8, ... ผลบวก 30 พจน์แรกเท่ากับเท่าใด?",a:["1365","1395","1425"],c:1,lv:1},
+{q:"ลำดับ 9, 18, 27, ... พจน์ที่ 15 เท่ากับเท่าใด?",a:["126","135","144"],c:1,lv:1},
+{q:"ลำดับ 40, 37, 34, ... มีกี่พจน์ก่อนจะต่ำกว่า 0?",a:["13","14","15"],c:1,lv:1},
+{q:"ลำดับ 11, 22, 33, ... ผลบวก 9 พจน์แรกเท่ากับเท่าใด?",a:["495","504","513"],c:1,lv:1},
+{q:"ลำดับ 5, 15, 25, ... พจน์ที่ 12 เท่ากับเท่าใด?",a:["105","115","125"],c:1,lv:1},
+{q:"ลำดับ 30, 28, 26, ... ผลบวก 20 พจน์แรกเท่ากับเท่าใด?",a:["420","440","460"],c:1,lv:1},
+{q:"ร้านกาแฟขายแก้ววันแรก 40 แก้ว และเพิ่มขึ้นวันละ 6 แก้ว วันที่เท่าใดจะขายได้ 100 แก้ว?",a:["วันที่ 10","วันที่ 11","วันที่ 12"],c:1,lv:1},
+{q:"นักเรียนออมเงินวันแรก 15 บาท เพิ่มขึ้นวันละ 5 บาท ต้องใช้เวลากี่วันจึงจะออมได้วันละ 60 บาท?",a:["8 วัน","9 วัน","10 วัน"],c:2,lv:1},
+{q:"โรงงานผลิตของวันแรก 120 ชิ้น ลดลงวันละ 8 ชิ้น วันที่เท่าใดจะเหลือผลิตวันละ 40 ชิ้น?",a:["วันที่ 9","วันที่ 10","วันที่ 11"],c:1,lv:1},
+{q:"ค่าจอดรถชั่วโมงแรก 20 บาท ทุกชั่วโมงเพิ่ม 5 บาท ชั่วโมงที่เท่าใดค่าจอดจะเป็น 60 บาท?",a:["ชั่วโมงที่ 8","ชั่วโมงที่ 9","ชั่วโมงที่ 10"],c:1,lv:1},
+{q:"ต้นไม้สูง 50 ซม. โตเพิ่มเดือนละ 4 ซม. อีกกี่เดือนจะสูง 98 ซม.?",a:["11 เดือน","12 เดือน","13 เดือน"],c:1,lv:1},
+{q:"นักวิ่งซ้อมวันแรก 4 กม. เพิ่มวันละ 1.5 กม. วันที่เท่าใดจะวิ่งได้ 20.5 กม.?",a:["วันที่ 11","วันที่ 12","วันที่ 13"],c:1,lv:1},
+{q:"ห้องสมุดมีหนังสือชั้นแรก 30 เล่ม แต่ละชั้นเพิ่ม 7 เล่ม ชั้นที่เท่าใดจะมี 100 เล่ม?",a:["ชั้นที่ 10","ชั้นที่ 11","ชั้นที่ 12"],c:0,lv:1},
+{q:"บริษัทมีพนักงานปีแรก 90 คน เพิ่มปีละ 15 คน ปีที่เท่าใดจะมีพนักงาน 210 คน?",a:["ปีที่ 8","ปีที่ 9","ปีที่ 10"],c:1,lv:1},
+{q:"รถบรรทุกขนของเที่ยวแรก 200 กก. ลดลงเที่ยวละ 20 กก. เที่ยวที่เท่าใดจะขนได้ 100 กก.?",a:["เที่ยวที่ 5","เที่ยวที่ 6","เที่ยวที่ 7"],c:1,lv:1},
+{q:"เก็บเงินวันแรก 25 บาท เพิ่มวันละ 3 บาท วันที่เท่าใดจะเก็บได้วันละ 70 บาท?",a:["วันที่ 15","วันที่ 16","วันที่ 17"],c:1,lv:1},
+{q:"สระน้ำเติมน้ำชั่วโมงแรก 300 ลิตร เพิ่มขึ้นชั่วโมงละ 50 ลิตร ชั่วโมงที่เท่าใดจะได้ 600 ลิตร?",a:["ชั่วโมงที่ 6","ชั่วโมงที่ 7","ชั่วโมงที่ 8"],c:1,lv:1},
+{q:"โรงเรียนปลูกต้นไม้ปีแรก 150 ต้น เพิ่มปีละ 25 ต้น ปีที่เท่าใดจะปลูกได้ 300 ต้น?",a:["ปีที่ 6","ปีที่ 7","ปีที่ 8"],c:1,lv:1},
+{q:"นักอ่านอ่านวันแรก 10 หน้า เพิ่มวันละ 4 หน้า วันที่เท่าใดจะอ่านได้ 50 หน้า?",a:["วันที่ 9","วันที่ 10","วันที่ 11"],c:2,lv:1},
+{q:"รายได้ร้านค้าเดือนแรก 5,000 บาท เพิ่มเดือนละ 800 บาท เดือนที่เท่าใดรายได้จะเป็น 13,000 บาท?",a:["เดือนที่ 10","เดือนที่ 11","เดือนที่ 12"],c:1,lv:1},
+{q:"บันไดขั้นแรกสูง 12 ซม. แต่ละขั้นสูงเพิ่ม 3 ซม. ขั้นที่เท่าใดจะสูง 48 ซม.?",a:["ขั้นที่ 12","ขั้นที่ 13","ขั้นที่ 14"],c:1,lv:1},
+{q:"ชาวสวนเก็บผลไม้วันแรก 80 ผล เพิ่มวันละ 12 ผล วันที่เท่าใดจะเก็บได้ 200 ผล?",a:["วันที่ 9","วันที่ 10","วันที่ 11"],c:1,lv:1},
+{q:"ราคาสินค้าเริ่ม 500 บาท ลดลงเดือนละ 25 บาท เดือนที่เท่าใดจะเหลือ 350 บาท?",a:["เดือนที่ 6","เดือนที่ 7","เดือนที่ 8"],c:1,lv:1},
+{q:"นักเรียนทำคะแนนครั้งแรก 40 คะแนน เพิ่มครั้งละ 8 คะแนน ครั้งที่เท่าใดจะได้ 96 คะแนน?",a:["ครั้งที่ 7","ครั้งที่ 8","ครั้งที่ 9"],c:1,lv:1},
+{q:"โรงงานผลิตน้ำวันแรก 1,000 ลิตร เพิ่มวันละ 150 ลิตร วันที่เท่าใดจะผลิตได้ 2,200 ลิตร?",a:["วันที่ 8","วันที่ 9","วันที่ 10"],c:1,lv:1},
+{q:"พนักงานได้เงินเดือนเริ่มต้น 12,000 บาท เพิ่มปีละ 1,000 บาท ปีที่เท่าใดจะได้ 20,000 บาท?",a:["ปีที่ 8","ปีที่ 9","ปีที่ 10"],c:1,lv:1},
+{q:"นักปั่นจักรยานปั่นวันแรก 15 กม. เพิ่มวันละ 2 กม. วันที่เท่าใดจะปั่นได้ 35 กม.?",a:["วันที่ 9","วันที่ 10","วันที่ 11"],c:1,lv:1},
+{q:"ค่าไฟเดือนแรก 900 บาท เพิ่มเดือนละ 100 บาท เดือนที่เท่าใดจะเป็น 1,700 บาท?",a:["เดือนที่ 7","เดือนที่ 8","เดือนที่ 9"],c:1,lv:1},
+{q:"บริษัทขายของออนไลน์วันแรก 60 ชิ้น เพิ่มวันละ 9 ชิ้น วันที่เท่าใดจะขายได้ 150 ชิ้น?",a:["วันที่ 10","วันที่ 11","วันที่ 12"],c:1,lv:1},
+{q:"เงินฝากเริ่มต้น 2,000 บาท ฝากเพิ่มเดือนละ 300 บาท เดือนที่เท่าใดเงินจะเป็น 5,000 บาท?",a:["เดือนที่ 10","เดือนที่ 11","เดือนที่ 12"],c:1,lv:1},
+{q:"โรงงานผลิตของวันแรก 500 ชิ้น ลดลงวันละ 50 ชิ้น วันที่เท่าใดจะผลิตได้ 200 ชิ้น?",a:["วันที่ 6","วันที่ 7","วันที่ 8"],c:1,lv:1}
+];
+
+/* === GAME === */
+const Game={
+  turn:0,
+  players:[
+    {id:0,m:2000,pos:0,c:'#e74c3c',n:'ผู้เล่น 1',e:'🔴'},
+    {id:1,m:2000,pos:0,c:'#3498db',n:'ผู้เล่น 2',e:'🔵'},
+    {id:2,m:2000,pos:0,c:'#2ecc71',n:'ผู้เล่น 3',e:'🟢'},
+    {id:3,m:2000,pos:0,c:'#f39c12',n:'ผู้เล่น 4',e:'🟡'}
+  ],
+  lands:{},
+  isLock:false,
+  usedQ:new Set(),
+
+  start(){
+    const ol=document.getElementById('start-overlay');
+    ol.style.opacity=0;setTimeout(()=>ol.remove(),500);
+    AudioSys.init();Scaler.init();this.renderBoard();this.updateUI();
+  },
+
+  renderBoard(){
+    const board=document.getElementById('board-el');
+    const map=[];
+    for(let i=10;i>=0;i--)map.push({id:i,r:11,c:11-i});
+    for(let i=1;i<=9;i++)map.push({id:10+i,r:11-i,c:1});
+    for(let i=0;i<=10;i++)map.push({id:20+i,r:1,c:1+i});
+    for(let i=1;i<=9;i++)map.push({id:30+i,r:1+i,c:11});
+
+    map.forEach(d=>{
+      const loc=LOCS[d.id]||{n:`ช่อง${d.id}`,e:'🏘️',p:150+d.id*5};
+      const cell=document.createElement('div');
+      cell.className='cell';cell.id=`c-${d.id}`;
+      cell.style.gridArea=`${d.r}/${d.c}`;
+
+      if(loc.t==='corner'){
+        cell.className+=' corner';
+        const icons=['🏁','🔒','🅿️','👮'];
+        const names=['เริ่ม','พักผ่อน','จอดรถ','ไปคุก'];
+        const idx=[0,10,20,30].indexOf(d.id);
+        cell.innerHTML=`<div style="font-size:20px">${icons[idx]}</div><div style="font-size:9px;font-weight:700">${names[idx]}</div>`;
+      } else if(loc.t==='card'){
+        cell.style.background='linear-gradient(135deg,#fff3cd,#ffeaa7)';
+        cell.innerHTML=`<div style="font-size:20px;margin:auto">🎴</div><div class="cell-info" style="background:rgba(255,235,0,.9);color:#8B6914">การ์ด</div>`;
+      } else {
+        const price=loc.p||150+d.id*5;
+        cell.innerHTML=`
+          <div class="cell-emoji">${loc.e||'🏘️'}</div>
+          <div class="cell-info" id="info-${d.id}">${loc.n}<br>${price}฿</div>
+          <div style="position:absolute;top:0;left:0;width:100%;height:3px" id="bar-${d.id}"></div>`;
+      }
+      board.appendChild(cell);
+    });
+
+    this.players.forEach(p=>{
+      const el=document.createElement('div');
+      el.className='player';el.id=`p-${p.id}`;
+      el.style.background=p.c;el.innerText=p.e;
+      board.appendChild(el);
+    });
+    this.moveVis(0,0);this.moveVis(1,0);this.moveVis(2,0);this.moveVis(3,0);
+  },
+
+  updateUI(){
+    const p=this.players[this.turn];
+    document.getElementById('ui-stats').innerHTML=this.players.map(pl=>`
+      <div class="p-stat ${pl.m<=0?'dead':''} ${this.turn===pl.id?'active-turn':''}">
+        <div class="p-name">${pl.e} ${pl.n.replace('ผู้เล่น ','P')}</div>
+        <div class="p-money">${pl.m.toLocaleString()}฿</div>
+      </div>`).join('');
+    document.getElementById('btn-roll').disabled=this.isLock;
+    document.getElementById('status-msg').innerText=`🎲 รอบ: ${p.n}`;
+  },
+
+  async roll(){
+    if(this.isLock)return;this.isLock=true;this.updateUI();AudioSys.playRoll();
+    const roll=Math.floor(Math.random()*6)+1;
+    const d=document.getElementById('dice-el');
+    const rot=[[0,0],[0,-90],[0,-180],[0,90],[-90,0],[90,0]];
+    const[rx,ry]=rot[roll-1];
+    d.style.transform=`rotateX(${rx+720}deg) rotateY(${ry+720}deg)`;
+    await new Promise(r=>setTimeout(r,900));
+    await this.walk(roll);
+  },
+
+  async walk(steps){
+    const p=this.players[this.turn];
+    for(let i=0;i<steps;i++){
+      p.pos=(p.pos+1)%40;
+      if(p.pos===0){p.m+=200;AudioSys.beep(800,.1);this.showToast('ผ่านจุดเริ่ม +200฿',true)}
+      this.moveVis(p.id,p.pos);
+      AudioSys.beep(400,.05);
+      await new Promise(r=>setTimeout(r,200));
+    }
+    this.checkLand();
+  },
+
+  moveVis(pid,pos){
+    const cell=document.getElementById(`c-${pos}`);
+    const pl=document.getElementById(`p-${pid}`);
+    if(!cell||!pl)return;
+    const off=pid*7-10;
+    pl.style.transform=`translate(${cell.offsetLeft+18+off}px,${cell.offsetTop+18+off}px)`;
+  },
+
+  checkLand(){
+    const p=this.players[this.turn];const pos=p.pos;
+    const loc=LOCS[pos];
+    if(loc&&loc.t==='card'){this.triggerCard();return}
+    if(loc&&loc.t==='corner'){
+      if(pos===30){p.m-=100;this.showToast('ไปคุก! -100฿',false)}
+      setTimeout(()=>this.nextTurn(),800);return;
+    }
+    const price=loc?.p||(150+pos*5);
+    const land=this.lands[pos];
+    if(!land){
+      if(p.m>=price){
+        this.enableBtns(true,true);
+        document.getElementById('status-msg').innerText=`ซื้อ ${loc?.n||'ช่องนี้'} ราคา ${price}฿?`;
+      }else{setTimeout(()=>this.nextTurn(),500)}
+    }else if(land.owner!==p.id){
+      const rent=Math.floor(price*.5);
+      p.m-=rent;this.players[land.owner].m+=rent;
+      this.showToast(`จ่ายค่าเช่า ${rent}฿`,false);
+      AudioSys.playFail();
+      setTimeout(()=>this.nextTurn(),1400);
+    }else{setTimeout(()=>this.nextTurn(),400)}
+  },
+
+  getQuestion(){
+    // Pick unused question, reset if all used
+    if(this.usedQ.size>=QUIZ.length)this.usedQ.clear();
+    let idx;
+    do{idx=Math.floor(Math.random()*QUIZ.length)}while(this.usedQ.has(idx));
+    this.usedQ.add(idx);
+    return QUIZ[idx];
+  },
+
+  triggerCard(){
+    const overlay=document.getElementById('active-card-overlay');
+    const flipper=document.getElementById('card-flipper');
+    const q=this.getQuestion();
+
+    document.getElementById('q-level').textContent=q.lv===0?'ระดับง่าย':'ระดับยาก';
+    document.getElementById('q-level').className='quiz-level '+(q.lv===0?'lvl-easy':'lvl-hard');
+    document.getElementById('q-text').textContent=q.q;
+
+    const opts=document.getElementById('q-opts');opts.innerHTML='';
+    const shuffled=q.a.map((ans,i)=>({ans,orig:i})).sort(()=>Math.random()-.5);
+    let answered=false;
+
+    shuffled.forEach(({ans,orig})=>{
+      const btn=document.createElement('div');
+      btn.className='quiz-opt';btn.textContent=ans;
+      btn.onclick=()=>{
+        if(answered)return;answered=true;
+        const isWin=orig===q.c;
+        // Show feedback
+        opts.querySelectorAll('.quiz-opt').forEach(b=>{
+          const bOrig=shuffled.find(s=>s.ans===b.textContent)?.orig;
+          if(bOrig===q.c)b.classList.add('correct');
+        });
+        if(!isWin)btn.classList.add('wrong');
+        if(isWin){this.players[this.turn].m+=300;AudioSys.playWin();this.showToast('ถูกต้อง! +300฿',true)}
+        else{this.players[this.turn].m-=100;AudioSys.playFail();this.showToast('ผิด! -100฿',false)}
+        setTimeout(()=>{
+          overlay.classList.remove('show');flipper.classList.remove('flipped');
+          this.updateUI();this.nextTurn();
+        },1200);
+      };
+      opts.appendChild(btn);
+    });
+
+    overlay.classList.add('show');
+    setTimeout(()=>flipper.classList.add('flipped'),600);
+  },
+
+  buy(){
+    const p=this.players[this.turn];
+    const loc=LOCS[p.pos];const price=loc?.p||(150+p.pos*5);
+    p.m-=price;this.lands[p.pos]={owner:p.id};
+    const bar=document.getElementById(`bar-${p.pos}`);
+    if(bar)bar.style.background=p.c;
+    AudioSys.playWin();this.showToast(`ซื้อ ${loc?.n||'ช่อง '+p.pos} แล้ว!`,true);
+    this.nextTurn();
+  },
+
+  pass(){this.nextTurn()},
+
+  nextTurn(){
+    this.enableBtns(false,false);this.isLock=false;
+    this.turn=(this.turn+1)%4;
+    // skip bankrupt
+    let tries=0;
+    while(this.players[this.turn].m<=0&&tries<4){this.turn=(this.turn+1)%4;tries++}
+    this.updateUI();
+  },
+
+  enableBtns(buy,pass){
+    document.getElementById('btn-buy').disabled=!buy;
+    document.getElementById('btn-pass').disabled=!pass;
+    document.getElementById('btn-roll').disabled=buy||pass;
+  },
+
+  showToast(msg,good){
+    const t=document.getElementById('result-toast');
+    t.textContent=msg;
+    t.style.background=good?'#27ae60':'#c0392b';
+    t.classList.add('show');
+    setTimeout(()=>t.classList.remove('show'),1800);
+  }
+};
+</script>
+</body>
+</html>
