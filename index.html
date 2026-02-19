@@ -12,10 +12,10 @@ body{margin:0;background:var(--bg);width:100vw;height:100vh;overflow:hidden;disp
 
 /* START */
 #start-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:radial-gradient(circle at center,#2d1b69 0%,#0a0a1a 100%);z-index:99999;display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity .5s}
-.start-title{font-size:60px;color:var(--gold);text-shadow:0 0 30px rgba(212,175,55,.8);margin:0;text-align:center}
-.start-sub{font-size:22px;color:#eee;opacity:.8;margin:8px 0 30px}
-.start-btn{padding:15px 50px;font-size:22px;border-radius:50px;background:linear-gradient(135deg,#d4af37,#f39c12);color:#fff;border:none;cursor:pointer;font-family:'Sarabun';font-weight:700;box-shadow:0 0 30px rgba(212,175,55,.6);animation:pulse 2s infinite;letter-spacing:1px}
-.thai-decor{font-size:50px;opacity:.3;position:absolute}
+.start-title{font-size:75px;color:var(--gold);text-shadow:0 0 30px rgba(212,175,55,.8);margin:0;text-align:center}
+.start-sub{font-size:28px;color:#eee;opacity:.8;margin:8px 0 30px}
+.start-btn{padding:15px 50px;font-size:28px;border-radius:50px;background:linear-gradient(135deg,#d4af37,#f39c12);color:#fff;border:none;cursor:pointer;font-family:'Sarabun';font-weight:700;box-shadow:0 0 30px rgba(212,175,55,.6);animation:pulse 2s infinite;letter-spacing:1px}
+.thai-decor{font-size:62px;opacity:.3;position:absolute}
 .thai-decor.tl{top:20px;left:20px}.thai-decor.tr{top:20px;right:20px}.thai-decor.bl{bottom:20px;left:20px}.thai-decor.br{bottom:20px;right:20px}
 
 /* SCALER */
@@ -23,13 +23,13 @@ body{margin:0;background:var(--bg);width:100vw;height:100vh;overflow:hidden;disp
 
 /* SIDEBAR */
 .sidebar{width:300px;display:flex;flex-direction:column;background:linear-gradient(180deg,#ffffff 0%,#fef9f0 100%);border-radius:16px;padding:16px;box-shadow:0 10px 30px rgba(0,0,0,.1);border:2px solid var(--gold)}
-.logo{font-size:30px;font-weight:700;text-align:center;margin-bottom:12px;color:var(--thai-red);text-shadow:1px 1px 0 rgba(0,0,0,.1)}
-.logo-sub{font-size:15px;text-align:center;color:#888;margin-top:-10px;margin-bottom:12px}
+.logo{font-size:38px;font-weight:700;text-align:center;margin-bottom:12px;color:var(--thai-red);text-shadow:1px 1px 0 rgba(0,0,0,.1)}
+.logo-sub{font-size:19px;text-align:center;color:#888;margin-top:-10px;margin-bottom:12px}
 .stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
-.p-stat{background:#fff;padding:8px;border-radius:10px;text-align:center;border:2px solid #eee;transition:.3s;font-size:15px}
+.p-stat{background:#fff;padding:8px;border-radius:10px;text-align:center;border:2px solid #eee;transition:.3s;font-size:19px}
 .p-stat.active-turn{transform:scale(1.08);border-color:var(--gold);box-shadow:0 4px 12px rgba(212,175,55,.4)}
 .p-stat.dead{opacity:.35;filter:grayscale(1)}
-.p-name{font-weight:600;font-size:16px}.p-money{font-weight:700;color:#2d3436;font-size:19px}
+.p-name{font-weight:600;font-size:20px}.p-money{font-weight:700;color:#2d3436;font-size:24px}
 
 /* DICE */
 .dice-area{flex-grow:1;display:flex;flex-direction:column;align-items:center;justify-content:center;background:rgba(0,0,0,.03);border-radius:12px;margin:8px 0}
@@ -40,11 +40,11 @@ body{margin:0;background:var(--bg);width:100vw;height:100vh;overflow:hidden;disp
 .s1{transform:rotateY(0deg) translateZ(30px)}.s2{transform:rotateY(90deg) translateZ(30px)}
 .s3{transform:rotateY(180deg) translateZ(30px)}.s4{transform:rotateY(-90deg) translateZ(30px)}
 .s5{transform:rotateX(90deg) translateZ(30px)}.s6{transform:rotateX(-90deg) translateZ(30px)}
-#status-msg{text-align:center;color:#636e72;font-size:17px;margin-top:4px;min-height:40px;padding:0 8px}
+#status-msg{text-align:center;color:#636e72;font-size:21px;margin-top:4px;min-height:40px;padding:0 8px}
 
 /* BUTTONS */
 .controls{margin-top:auto}
-button{width:100%;padding:13px;border-radius:10px;border:none;font-size:19px;font-weight:700;cursor:pointer;color:#fff;margin-bottom:6px;font-family:'Sarabun';box-shadow:0 4px 0 rgba(0,0,0,.2);transition:transform .1s}
+button{width:100%;padding:13px;border-radius:10px;border:none;font-size:24px;font-weight:700;cursor:pointer;color:#fff;margin-bottom:6px;font-family:'Sarabun';box-shadow:0 4px 0 rgba(0,0,0,.2);transition:transform .1s}
 button:active:not(:disabled){transform:translateY(3px);box-shadow:none}
 button:disabled{background:#b2bec3!important;cursor:not-allowed;box-shadow:none;opacity:.6}
 .btn-roll{background:linear-gradient(135deg,#8e44ad,#6c5ce7)}.btn-buy{background:linear-gradient(135deg,#27ae60,#00b894)}.btn-pass{background:linear-gradient(135deg,#e74c3c,#ff7675)}
@@ -53,12 +53,12 @@ button:disabled{background:#b2bec3!important;cursor:not-allowed;box-shadow:none;
 .board-wrapper{flex-grow:1;display:flex;align-items:center;justify-content:center}
 .board{display:grid;grid-template-columns:repeat(11,62px);grid-template-rows:repeat(11,62px);gap:2px;background:#c8a96e;padding:5px;border-radius:8px;box-shadow:0 10px 40px rgba(0,0,0,.2);border:4px solid #8B6914;position:relative}
 .cell{background:#fef9f0;border:1px solid #ddd;border-radius:3px;display:flex;flex-direction:column;align-items:center;position:relative;overflow:hidden}
-.cell-emoji{font-size:26px;margin:auto}
-.cell-info{position:absolute;bottom:0;width:100%;background:rgba(255,255,255,.9);text-align:center;font-size:10px;padding:2px 0;font-weight:700;line-height:1.2}
-.corner{background:linear-gradient(135deg,#fff3cd,#ffe082);display:flex;align-items:center;justify-content:center;font-size:24px;text-align:center;line-height:1.2;font-weight:900;color:var(--thai-red)}
+.cell-emoji{font-size:32px;margin:auto}
+.cell-info{position:absolute;bottom:0;width:100%;background:rgba(255,255,255,.9);text-align:center;font-size:12px;padding:2px 0;font-weight:700;line-height:1.2}
+.corner{background:linear-gradient(135deg,#fff3cd,#ffe082);display:flex;align-items:center;justify-content:center;font-size:30px;text-align:center;line-height:1.2;font-weight:900;color:var(--thai-red)}
 .center-box{grid-area:2/2/11/11;background:linear-gradient(135deg,#fff8e1,#fff3cd);display:flex;flex-direction:column;align-items:center;justify-content:center;border:2px dashed var(--gold);border-radius:4px}
-.deck-placeholder{width:90px;height:120px;background:linear-gradient(135deg,#c0392b,#8e1010);border:2px solid var(--gold);border-radius:10px;display:flex;align-items:center;justify-content:center;color:var(--gold);font-size:36px;cursor:pointer;box-shadow:4px 4px 0 var(--gold)}
-.player{width:26px;height:26px;border-radius:50%;border:2px solid white;position:absolute;z-index:10;box-shadow:0 3px 6px rgba(0,0,0,.3);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;transition:transform .4s cubic-bezier(.175,.885,.32,1.275)}
+.deck-placeholder{width:90px;height:120px;background:linear-gradient(135deg,#c0392b,#8e1010);border:2px solid var(--gold);border-radius:10px;display:flex;align-items:center;justify-content:center;color:var(--gold);font-size:45px;cursor:pointer;box-shadow:4px 4px 0 var(--gold)}
+.player{width:26px;height:26px;border-radius:50%;border:2px solid white;position:absolute;z-index:10;box-shadow:0 3px 6px rgba(0,0,0,.3);display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;transition:transform .4s cubic-bezier(.175,.885,.32,1.275)}
 
 /* CARD OVERLAY */
 #active-card-overlay{position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(0,0,0,.85);z-index:20000;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .3s;backdrop-filter:blur(4px)}
@@ -69,16 +69,16 @@ button:disabled{background:#b2bec3!important;cursor:not-allowed;box-shadow:none;
 .c-face{position:absolute;width:100%;height:100%;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:16px;display:flex;flex-direction:column;align-items:center;justify-content:center;box-shadow:0 20px 60px rgba(0,0,0,.5);border:4px solid var(--gold)}
 .c-front{background:linear-gradient(135deg,#8e1010,#c0392b);color:var(--gold)}
 .c-back{background:#fff;transform:rotateY(180deg);padding:20px;color:#333;justify-content:flex-start}
-.quiz-level{font-size:13px;padding:3px 10px;border-radius:20px;font-weight:700;margin-bottom:8px;display:inline-block}
+.quiz-level{font-size:16px;padding:3px 10px;border-radius:20px;font-weight:700;margin-bottom:8px;display:inline-block}
 .lvl-easy{background:#e8f5e9;color:#2e7d32}.lvl-hard{background:#fce4ec;color:#b71c1c}
-#q-text{font-size:23px;font-weight:700;text-align:center;margin:10px 0;line-height:1.4;color:#2d3436}
-.quiz-opt{width:100%;padding:10px 14px;margin-top:6px;background:#f5f5f5;border:1px solid #e0e0e0;border-radius:8px;text-align:left;font-size:17px;cursor:pointer;transition:.15s;font-family:'Sarabun';font-weight:600}
+#q-text{font-size:29px;font-weight:700;text-align:center;margin:10px 0;line-height:1.4;color:#2d3436}
+.quiz-opt{width:100%;padding:10px 14px;margin-top:6px;background:#f5f5f5;border:1px solid #e0e0e0;border-radius:8px;text-align:left;font-size:21px;cursor:pointer;transition:.15s;font-family:'Sarabun';font-weight:600}
 .quiz-opt:hover{background:#fff3cd}.quiz-opt:active{background:var(--gold);color:#fff}
 .quiz-opt.correct{background:#c8e6c9!important;border-color:#4caf50;color:#1b5e20}
 .quiz-opt.wrong{background:#ffcdd2!important;border-color:#f44336;color:#b71c1c}
 
 /* RESULT TOAST */
-#result-toast{position:fixed;top:20px;left:50%;transform:translateX(-50%) translateY(-80px);background:#333;color:#fff;padding:12px 28px;border-radius:30px;font-size:21px;font-weight:700;z-index:30000;transition:transform .4s;box-shadow:0 8px 24px rgba(0,0,0,.3)}
+#result-toast{position:fixed;top:20px;left:50%;transform:translateX(-50%) translateY(-80px);background:#333;color:#fff;padding:12px 28px;border-radius:30px;font-size:26px;font-weight:700;z-index:30000;transition:transform .4s;box-shadow:0 8px 24px rgba(0,0,0,.3)}
 #result-toast.show{transform:translateX(-50%) translateY(0)}
 
 @keyframes pulse{0%{transform:scale(1)}50%{transform:scale(1.04)}100%{transform:scale(1)}}
@@ -100,12 +100,12 @@ button:disabled{background:#b2bec3!important;cursor:not-allowed;box-shadow:none;
 <div id="active-card-overlay">
   <div class="card-flipper" id="card-flipper">
     <div class="c-face c-front">
-      <div style="font-size:56px">🎴</div>
-      <div style="font-size:22px;margin-top:12px;letter-spacing:2px;font-weight:700">การ์ดโชคดี</div>
-      <div style="font-size:14px;opacity:.7;margin-top:6px">ลำดับเลขคณิต</div>
+      <div style="font-size:70px">🎴</div>
+      <div style="font-size:28px;margin-top:12px;letter-spacing:2px;font-weight:700">การ์ดโชคดี</div>
+      <div style="font-size:18px;opacity:.7;margin-top:6px">ลำดับเลขคณิต</div>
     </div>
     <div class="c-face c-back">
-      <h3 style="color:var(--thai-red);margin:0;font-size:18px;text-align:center">🧮 คำถาม</h3>
+      <h3 style="color:var(--thai-red);margin:0;font-size:22px;text-align:center">🧮 คำถาม</h3>
       <span id="q-level" class="quiz-level lvl-easy">ง่าย</span>
       <p id="q-text">กำลังโหลด...</p>
       <div id="q-opts" style="width:100%"></div>
@@ -143,7 +143,7 @@ button:disabled{background:#b2bec3!important;cursor:not-allowed;box-shadow:none;
     <div class="board" id="board-el">
       <div class="center-box">
         <div class="deck-placeholder">🎴</div>
-        <div style="margin-top:8px;color:#a0856c;font-size:12px;font-weight:600">การ์ดคำถาม</div>
+        <div style="margin-top:8px;color:#a0856c;font-size:15px;font-weight:600">การ์ดคำถาม</div>
       </div>
     </div>
   </div>
@@ -317,10 +317,10 @@ const Game={
         const icons=['🏁','🔒','🅿️','👮'];
         const names=['เริ่ม','พักผ่อน','จอดรถ','ไปคุก'];
         const idx=[0,10,20,30].indexOf(d.id);
-        cell.innerHTML=`<div style="font-size:20px">${icons[idx]}</div><div style="font-size:9px;font-weight:700">${names[idx]}</div>`;
+        cell.innerHTML=`<div style="font-size:25px">${icons[idx]}</div><div style="font-size:11px;font-weight:700">${names[idx]}</div>`;
       } else if(loc.t==='card'){
         cell.style.background='linear-gradient(135deg,#fff3cd,#ffeaa7)';
-        cell.innerHTML=`<div style="font-size:20px;margin:auto">🎴</div><div class="cell-info" style="background:rgba(255,235,0,.9);color:#8B6914">การ์ด</div>`;
+        cell.innerHTML=`<div style="font-size:25px;margin:auto">🎴</div><div class="cell-info" style="background:rgba(255,235,0,.9);color:#8B6914">การ์ด</div>`;
       } else {
         const price=loc.p||150+d.id*5;
         cell.innerHTML=`
